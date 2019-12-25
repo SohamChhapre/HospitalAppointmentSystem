@@ -1,5 +1,5 @@
 from django.db import models
-
+from datetime import datetime
 
 class Logs(models.Model):
 
@@ -7,3 +7,6 @@ class Logs(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     is_active  = models.BooleanField(default=True)
     is_delete  = models.BooleanField(default=False)
+
+    class Meta:
+        abstract = True
