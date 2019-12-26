@@ -44,7 +44,9 @@ INSTALLED_APPS = [
     'doctor',
     'hospitaldoctor',
     'designation',
-    'specialization'
+    'specialization',
+    'department',
+    'doctordepartment'
 ]
 
 MIDDLEWARE = [
