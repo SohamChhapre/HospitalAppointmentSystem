@@ -7,5 +7,8 @@ from department.models import Department
 class DoctorDepartment(Logs):
 
     doctor_dept_id      = models.AutoField(primary_key=True)
-    hospital_doctor_id  = models.ForeignKey(HospitalDoctor, on_delete=models.CASCADE, related_name='DoctorDepartmentDoctorId')
-    dept_id             = models.ForeignKey(Department,on_delete=models.CASCADE, related_name='DoctorDepartmentDeptId')  
+    hospital_doctor     = models.ForeignKey(HospitalDoctor, on_delete=models.CASCADE, related_name='DoctorDepartmentDoctorId')
+    dept                = models.ForeignKey(Department,on_delete=models.CASCADE, related_name='DoctorDepartmentDeptId') 
+    
+    def __str__(self):
+        return self.doctor_dept_id

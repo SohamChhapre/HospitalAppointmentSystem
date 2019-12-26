@@ -7,5 +7,9 @@ from patient.models import Patient
 class HospitalPatient(Logs):
 
     hospital_patient_id = models.AutoField(primary_key=True)
-    hospital_id         = models.ForeignKey(Hospital,on_delete=models.CASCADE,related_name='hospitalId')
-    patient_id          = models.ForeignKey(Patient,on_delete=models.CASCADE,related_name='patientId')
+    hospital         = models.ForeignKey(Hospital,on_delete=models.CASCADE,related_name='hospitalId')
+    patient          = models.ForeignKey(Patient,on_delete=models.CASCADE,related_name='patientId')
+
+
+    def __str__(self):
+        return "Hospital {} patient {}".format(self.hospital, self.patient)

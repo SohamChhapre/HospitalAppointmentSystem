@@ -9,7 +9,10 @@ from appointment.models import Appointment
 class Documents(Logs):
     
     document_id         = models.AutoField(primary_key=True)
-    hospital_patient_id = models.ForeignKey(HospitalPatient, related_name='DocumentPatientId', null=True, blank=True, on_delete=models.CASCADE)
-    doctor_id           = models.ForeignKey(Doctor, related_name='DocumentDoctorId', null=True, blank=True, on_delete=models.CASCADE)
-    appointment_id      = models.ForeignKey(Appointment, related_name='DocumentAppointmentId', null=True, blank=True, on_delete=models.CASCADE)
+    hospital_patient    = models.ForeignKey(HospitalPatient, related_name='DocumentPatientId', null=True, blank=True, on_delete=models.CASCADE)
+    doctor              = models.ForeignKey(Doctor, related_name='DocumentDoctorId', null=True, blank=True, on_delete=models.CASCADE)
+    appointment         = models.ForeignKey(Appointment, related_name='DocumentAppointmentId', null=True, blank=True, on_delete=models.CASCADE)
     documents           = models.FileField(upload_to='docs/')
+
+    def __str__(self):
+        return self.documents

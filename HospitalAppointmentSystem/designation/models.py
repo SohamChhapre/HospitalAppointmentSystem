@@ -5,5 +5,8 @@ from doctor.models import Doctor
 
 class Designation(Logs):
 
-    doctor_id       = models.ForeignKey(Doctor, on_delete=models.CASCADE)
+    doctor          = models.ForeignKey(Doctor, on_delete=models.CASCADE)
     designations    = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.designations

@@ -13,8 +13,8 @@ class Appointment(Logs):
     )
     
     appointment_id      = models.AutoField(primary_key=True)
-    hospital_patient_id = models.ForeignKey(HospitalPatient, on_delete=models.CASCADE, related_name='AppointmentPatientId')
-    hospital_doctor_id  = models.ForeignKey(HospitalDoctor, on_delete=models.CASCADE, related_name='AppointmentDoctorId')
+    hospital_patient = models.ForeignKey(HospitalPatient, on_delete=models.CASCADE, related_name='AppointmentPatientId')
+    hospital_doctor  = models.ForeignKey(HospitalDoctor, on_delete=models.CASCADE, related_name='AppointmentDoctorId')
     symptoms            = models.TextField(max_length=255, blank=True, null=True)
     time                = models.DateTimeField()
     status              = models.CharField(max_length=10,choices=STATUS_CHOICES)
