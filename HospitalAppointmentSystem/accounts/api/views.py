@@ -1,7 +1,7 @@
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
-from rest_framework import permissions
+from rest_framework import permissions,status
 from django.contrib.auth import authenticate,get_user_model
 from .serializers import UserRegisterSerializer
 from .permissions import AnonPermissionOnly
@@ -17,11 +17,21 @@ class CustomAuthToken(ObtainAuthToken):
         user = serializer.validated_data['user']
         token = Token.objects.get_or_create(user=user)
         if user.is_hospital:
-            return Response({
-                'token': str(token[0]),
-                'email': user.email,
-                'name': user.full_name,
-                'id': user.id
-            })
+            context = {
+                    "message":"Hospital's Data",
+                    "status":True,
+                    "data":{
+                            'token': str(token[0]),
+                            'email': user.email,
+                            'name': user.full_name,
+                            'id': user.id
+                            }
+                    }
+            return Response(context,status=status.HTTP_202_ACCEPTED)
         else:
-            return Response({'Details':'You are not authenticated!!'})
+            context = {
+                    "message":"You are not authenticated!!",
+                    "status":False,
+                    "data":None
+                    }
+            return Response(context,status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)

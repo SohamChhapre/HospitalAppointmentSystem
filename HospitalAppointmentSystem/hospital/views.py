@@ -16,14 +16,29 @@ class ListHospital(APIView):
         if id is None:
             queryset = Hospital.objects.all()
             serializer = HospitalSerializer(queryset, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            context = {
+                    "message":"Hospital's Data",
+                    "status":True,
+                    "data":serializer.data
+                }
+            return Response(context, status=status.HTTP_200_OK)
         else:
             queryset = Hospital.objects.filter(User=id).first()
             serializer = HospitalSerializer(queryset, many=False)
-            if queryset is None:
-                return Response({"details":"Invalid User Id"}, status=status.HTTP_400_BAD_REQUEST)
+            if queryset is not None:
+                context = {
+                    "message":"Hospital's Data",
+                    "status":True,
+                    "data":serializer.data
+                }
+                return Response(context, status=status.HTTP_200_OK)
             else:
-                return Response(serializer.data, status=status.HTTP_200_OK)
+                context = {
+                    "message":"Invalid User Id to get data",
+                    "status":False,
+                    "data": None
+                }
+                return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
     def patch(self, request, id, format=None):
         query = self.get_hospital(id)
