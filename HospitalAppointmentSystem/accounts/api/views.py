@@ -18,7 +18,7 @@ class CustomAuthToken(ObtainAuthToken):
         token = Token.objects.get_or_create(user=user)
         if user.is_hospital:
             context = {
-                    "message":"Hospital's Data",
+                    "message":"Authentication",
                     "status":True,
                     "data":{
                             'token': str(token[0]),
