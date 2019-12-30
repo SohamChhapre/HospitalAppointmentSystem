@@ -23,6 +23,7 @@ urlpatterns = [
     path('auth/',include('accounts.api.urls')),
     path('hospital/',include('hospital.urls')),
     path('patient/',include('patient.urls')),
+    path('doctor/',include('doctor.urls')),
 ]
 
 if settings.DEBUG:

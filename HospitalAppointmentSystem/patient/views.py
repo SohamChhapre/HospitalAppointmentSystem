@@ -3,7 +3,7 @@ from .models import Patient
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .serializer import PatientSerializer
+from .serializer import PatientSerializer,PatientListSerializer
 from hospitalpatient.serializer import HospitalPatientSerializer
 from hospitalpatient.models import HospitalPatient
 from hospital.models import Hospital
@@ -115,5 +115,16 @@ class ListPatient(APIView):
         return Response(context,status=status.HTTP_204_NO_CONTENT)
 
 
+class PatientListAPI(APIView):
 
+    def get(self, request, format=None):
+        queryset = Patient.objects.all()
+        serializer = PatientListSerializer(queryset, many=True)
+        context = {
+                "message":"Patient List Data",
+                "status":True,
+                "total_patient":len(serializer.data),
+                "data":serializer.data
+            }
+        return Response(context, status=status.HTTP_200_OK)
 

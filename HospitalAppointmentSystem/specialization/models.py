@@ -5,7 +5,7 @@ from doctor.models import Doctor
 
 class Specialization(Logs):
 
-    doctor              = models.ForeignKey(Doctor, on_delete=models.CASCADE)
+    doctor              = models.ForeignKey(Doctor, on_delete=models.CASCADE, related_name='SpecializationDoctorId')
     specializations     = models.CharField(max_length=255)
 
     def __str__(self):

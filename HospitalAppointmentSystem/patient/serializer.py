@@ -6,3 +6,17 @@ class PatientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Patient
         fields = '__all__'
+
+class PatientListSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Patient
+        fields = [
+            'id',
+            'name',
+            'age',
+            'phone',
+            'profile_picture',
+            'address',
+            'city'
+        ]
