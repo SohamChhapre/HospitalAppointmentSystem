@@ -11,4 +11,4 @@ class DoctorDepartment(Logs):
     dept                = models.ForeignKey(Department,on_delete=models.CASCADE, related_name='DoctorDepartmentDeptId') 
     
     def __str__(self):
-        return self.doctor_dept_id
+        return "{} hospital doctor {} dept".format(self.hospital_doctor,self.dept)

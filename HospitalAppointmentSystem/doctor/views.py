@@ -3,7 +3,7 @@ from .models import Doctor
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .serializer import DoctorSerializer,DoctorListSerializer
+from .serializer import DoctorSerializer,DoctorListSerializer,GetDoctorSerializer
 from hospitaldoctor.serializer import HospitalDoctorSerializer
 from hospitaldoctor.models import HospitalDoctor
 from hospital.models import Hospital
@@ -16,7 +16,7 @@ class ListDoctor(APIView):
         request = self.request
         if id is None:
             queryset = Doctor.objects.all()
-            serializer = DoctorSerializer(queryset, many=True)
+            serializer = GetDoctorSerializer(queryset, many=True)
             context = {
                     "message":"Doctor's Data",
                     "status":True,
@@ -26,7 +26,7 @@ class ListDoctor(APIView):
             return Response(context, status=status.HTTP_200_OK)
         else:
             queryset = Doctor.objects.filter(id=id).first()
-            serializer = DoctorSerializer(queryset, many=False)
+            serializer = GetDoctorSerializer(queryset, many=False)
             if queryset is not None:
                 context = {
                     "message":"Doctor's Data",
@@ -43,6 +43,10 @@ class ListDoctor(APIView):
                 return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request, format=None):
+        dept = request.data.pop('department')
+        deptdata = {
+            'department' : dept[0]
+        }
         serializer = DoctorSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -51,14 +55,14 @@ class ListDoctor(APIView):
                 "status":True,
                 "data":serializer.data
             }
-            # print(context)
             data2 = {
                 'hospital' : self.get_hospital_id(request.user),
-                'doctor' :  serializer.data['id']
+                'doctor' :    serializer.data['id'],
             }
-            hpserializer = HospitalDoctorSerializer(data=data2)
+            hpserializer = HospitalDoctorSerializer(data=data2, context=deptdata)
             if hpserializer.is_valid():
                 hpserializer.save()
+                context.update({'department':hpserializer.data['dept']})
                 return Response(context, status=status.HTTP_201_CREATED)
             else:
                 context = {
@@ -87,7 +91,6 @@ class ListDoctor(APIView):
 
     def patch(self, request, id, format=None):
         query = self.get_doctor(id)
-        print(request.data)
         serializer = DoctorSerializer(query, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()

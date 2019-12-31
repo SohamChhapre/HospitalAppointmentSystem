@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path,include
 from django.conf import settings
 from django.conf.urls.static import static
+from hospitaldoctor.views import GetHospitalDoctorDepartmentListAPI
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,6 +25,8 @@ urlpatterns = [
     path('hospital/',include('hospital.urls')),
     path('patient/',include('patient.urls')),
     path('doctor/',include('doctor.urls')),
+    path('department/',include('department.urls')),
+    path('doctordept/',GetHospitalDoctorDepartmentListAPI.as_view()),
 ]
 
 if settings.DEBUG:
