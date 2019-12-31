@@ -8,6 +8,7 @@ from hospitalpatient.serializer import HospitalPatientSerializer,HospitalPatient
 from hospitalpatient.models import HospitalPatient
 from hospital.models import Hospital
 from .models import Patient
+from documents.models import Documents
 # Create your views here.
 
 class ListPatient(APIView):
@@ -45,6 +46,7 @@ class ListPatient(APIView):
     def post(self, request, format=None):
         data = request.data
         data['user']=None
+        files = request.data.pop('documents')
         serializer = PatientSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
@@ -60,6 +62,11 @@ class ListPatient(APIView):
             hpserializer = HospitalPatientSerializer(data=data2)
             if hpserializer.is_valid():
                 hpserializer.save()
+                print(hpserializer.data)
+                for file in files:
+                    d={}
+                    d['documents']=file
+                    Documents.objects.create(**d,hospital_patient_id=hpserializer.data['hospital_patient_id'])
                 return Response(context, status=status.HTTP_201_CREATED)
             else:
                 context = {

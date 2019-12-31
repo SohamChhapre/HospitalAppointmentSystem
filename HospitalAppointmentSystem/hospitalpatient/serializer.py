@@ -6,7 +6,7 @@ class HospitalPatientSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = HospitalPatient
-        fields = ['hospital','patient']
+        fields = ['hospital','patient','hospital_patient_id']
 
 class HospitalPatientDocSerializer(serializers.ModelSerializer):
 
