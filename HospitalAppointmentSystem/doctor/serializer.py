@@ -6,6 +6,7 @@ from specialization.models import Specialization
 from designation.serializer import DesignationSerializer
 from specialization.serializer import SpecializationSerializer
 from hospitaldoctor.serializer import GetHospitalDoctor
+from documents.serializer import DocumentPatientSerializer
 from datetime import date
 
 class DoctorSerializer(ModelSerializer):
@@ -95,7 +96,8 @@ class DoctorListSerializer(ModelSerializer):
     specializations = SpecializationSerializer(source='SpecializationDoctorId', many=True)
     age             = serializers.SerializerMethodField()
     department      = GetHospitalDoctor(source='HospitalDoctorDoctorId', many=True)
-    
+    documents       = DocumentPatientSerializer(source="DocumentDoctorId", many=True)
+
     class Meta:
         model = Doctor
         fields = [
@@ -105,7 +107,8 @@ class DoctorListSerializer(ModelSerializer):
             'specializations',
             'phone',
             'profile_picture',
-            'department'
+            'department',
+            'documents'
         ]
 
     def get_age(self, obj):
@@ -124,7 +127,8 @@ class GetDoctorSerializer(ModelSerializer):
     designations    = DesignationSerializer(source='DesignationDoctorId', many=True)
     specializations = SpecializationSerializer(source='SpecializationDoctorId', many=True)
     department      = GetHospitalDoctor(source='HospitalDoctorDoctorId', many=True)
-    
+    documents       = DocumentPatientSerializer(source="DocumentDoctorId", many=True)
+
     class Meta:
         model = Doctor
         fields = [
@@ -141,7 +145,8 @@ class GetDoctorSerializer(ModelSerializer):
             'profile_picture',
             'designations',
             'specializations',
-            'department'
+            'department',
+            'documents'
         ]
         read_only_fields = ['user','profile_picture']
 
