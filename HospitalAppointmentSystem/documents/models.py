@@ -15,4 +15,4 @@ class Documents(Logs):
     documents           = models.FileField(upload_to='docs/')
 
     def __str__(self):
-        return self.documents
+        return " {} document ".format(self.document_id)
