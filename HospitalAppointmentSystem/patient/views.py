@@ -3,8 +3,8 @@ from .models import Patient
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .serializer import PatientSerializer,PatientListSerializer
-from hospitalpatient.serializer import HospitalPatientSerializer
+from .serializer import PatientSerializer,PatientListSerializer,GetPatientSerializer
+from hospitalpatient.serializer import HospitalPatientSerializer,HospitalPatientDocSerializer
 from hospitalpatient.models import HospitalPatient
 from hospital.models import Hospital
 from .models import Patient
@@ -16,7 +16,7 @@ class ListPatient(APIView):
         request = self.request
         if id is None:
             queryset = Patient.objects.all()
-            serializer = PatientSerializer(queryset, many=True)
+            serializer = GetPatientSerializer(queryset, many=True)
             context = {
                     "message":"Patient's Data",
                     "status":True,
@@ -26,7 +26,7 @@ class ListPatient(APIView):
             return Response(context, status=status.HTTP_200_OK)
         else:
             queryset = Patient.objects.filter(id=id).first()
-            serializer = PatientSerializer(queryset, many=False)
+            serializer = GetPatientSerializer(queryset, many=False)
             if queryset is not None:
                 context = {
                     "message":"Patient's Data",
