@@ -30,7 +30,7 @@ class DoctorSerializer(ModelSerializer):
             'designations',
             'specializations'
         ]
-        read_only_fields = ['user','profile_picture','designations','specializations']
+        read_only_fields = ['user']
     
     def create(self, validated_data):
         validated_data['user']=None
