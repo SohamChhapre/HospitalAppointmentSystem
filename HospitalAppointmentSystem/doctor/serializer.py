@@ -10,8 +10,8 @@ from documents.serializer import DocumentPatientSerializer
 from datetime import date
 
 class DoctorSerializer(ModelSerializer):
-    # designations    = DesignationSerializer(source='DesignationDoctorId', many=True)
-    # specializations = SpecializationSerializer(source='SpecializationDoctorId', many=True)
+    designations    = DesignationSerializer(source='DesignationDoctorId', many=True)
+    specializations = SpecializationSerializer(source='SpecializationDoctorId', many=True)
 
     class Meta:
         model = Doctor
@@ -27,21 +27,21 @@ class DoctorSerializer(ModelSerializer):
             'gender',
             'experience', 
             'profile_picture',
-            # 'designations',
-            # 'specializations'
+            'designations',
+            'specializations'
         ]
         read_only_fields = ['user','profile_picture','designations','specializations']
     
-    # def create(self, validated_data):
-    #     validated_data['user']=None
-    #     designations    = validated_data.pop('DesignationDoctorId')
-    #     specializations = validated_data.pop('SpecializationDoctorId')
-    #     doctor          = Doctor.objects.create(**validated_data)
-    #     for designation in designations:
-    #         Designation.objects.create(**designation, doctor=doctor)
-    #     for specialization in specializations:
-    #         Specialization.objects.create(**specialization, doctor=doctor)
-    #     return doctor
+    def create(self, validated_data):
+        validated_data['user']=None
+        designations    = validated_data.pop('DesignationDoctorId')
+        specializations = validated_data.pop('SpecializationDoctorId')
+        doctor          = Doctor.objects.create(**validated_data)
+        for designation in designations:
+            Designation.objects.create(**designation, doctor=doctor)
+        for specialization in specializations:
+            Specialization.objects.create(**specialization, doctor=doctor)
+        return doctor
         
     def update(self, instance, validated_data):
         
