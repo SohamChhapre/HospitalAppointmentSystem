@@ -7,8 +7,10 @@ class DesignationSerializer(ModelSerializer):
         model = Designation
         fields = [
             'id',
-            'doctor',
             'designations'
         ]
 
-        read_only_fields = ('doctor',)
+    def to_representation(self, instance):
+        ret = super(DesignationSerializer, self).to_representation(instance)
+        ret['name'] = ret.pop('designations')
+        return ret

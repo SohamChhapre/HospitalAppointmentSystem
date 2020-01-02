@@ -8,8 +8,11 @@ class SpecializationSerializer(ModelSerializer):
         model = Specialization
         fields = [
             'id',
-            'doctor',
             'specializations'
         ]
 
-        read_only_fields = ('doctor',)
+
+    def to_representation(self, instance):
+        ret = super(SpecializationSerializer, self).to_representation(instance)
+        ret['name'] = ret.pop('specializations')
+        return ret

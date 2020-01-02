@@ -97,7 +97,7 @@ class DoctorListSerializer(ModelSerializer):
     specializations = SpecializationSerializer(source='SpecializationDoctorId', many=True)
     age             = serializers.SerializerMethodField()
     department      = GetHospitalDoctor(source='HospitalDoctorDoctorId', many=True)
-    documents       = DocumentPatientSerializer(source="DocumentDoctorId", many=True)
+    # documents       = DocumentPatientSerializer(source="DocumentDoctorId", many=True)
     appointment     = SerializerMethodField()
 
     class Meta:
@@ -110,7 +110,7 @@ class DoctorListSerializer(ModelSerializer):
             'phone',
             'profile_picture',
             'department',
-            'documents',
+            # 'documents',
             'appointment',
         ]
 
@@ -123,17 +123,17 @@ class DoctorListSerializer(ModelSerializer):
         app = Appointment.objects.filter(hospital_doctor_id__doctor_id=obj.id).count()
         return app
 
-
-
     def to_representation(self, instance):
         ret = super(DoctorListSerializer, self).to_representation(instance)
         k = ret.pop('department')
+        k[0]['id'] = k[0].pop('dept_id')
+        k[0]['name'] = k[0].pop('department')
         ret.update({'department':k[0]})
         return ret
     
         
 class GetDoctorSerializer(ModelSerializer):
-
+    
     designations    = DesignationSerializer(source='DesignationDoctorId', many=True)
     specializations = SpecializationSerializer(source='SpecializationDoctorId', many=True)
     department      = GetHospitalDoctor(source='HospitalDoctorDoctorId', many=True)
@@ -163,5 +163,31 @@ class GetDoctorSerializer(ModelSerializer):
     def to_representation(self, instance):
         ret = super(GetDoctorSerializer, self).to_representation(instance)
         k = ret.pop('department')
+        k[0]['id'] = k[0].pop('dept_id')
+        k[0]['name'] = k[0].pop('department')
         ret.update({'department':k[0]})
         return ret
+
+class GetAppointmentDoctorSerializer(ModelSerializer):
+
+    department      = GetHospitalDoctor(source='HospitalDoctorDoctorId', many=True)
+
+    class Meta:
+        model = Doctor
+        fields = [
+            'id',
+            'name',
+            'email',
+            'profile_picture',
+            'department',
+        ]
+        read_only_fields = ['user']
+
+    def to_representation(self, instance):
+        ret = super(GetAppointmentDoctorSerializer, self).to_representation(instance)
+        k = ret.pop('department')
+        k[0]['id'] = k[0].pop('dept_id')
+        k[0]['name'] = k[0].pop('department')
+        ret.update({'department':k[0]})
+        return ret
+    
