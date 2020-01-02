@@ -6,6 +6,10 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import permissions
 from .serializers import HospitalSerializer
+from patient.serializer import GetPatientList
+from patient.models import Patient
+from doctor.serializer import GetDoctorList
+from doctor.models import Doctor
 # Create your views here.
 
 class ListHospital(APIView):
@@ -48,3 +52,19 @@ class ListHospital(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class HospitalPatientDoctorAPI(APIView):
+
+    def get(self, request, format=None):
+        queryset = Patient.objects.all()
+        serializer = GetPatientList(queryset, many=True)
+        data = {}
+        data['patient'] = serializer.data
+        queryset = Doctor.objects.all()
+        serializer = GetDoctorList(queryset, many=True)
+        data['doctor'] = serializer.data
+        context = {
+            "message": "Hospital Doctor And Patient",
+            "status": True,
+            "data":data
+        }
+        return Response(context, status=status.HTTP_200_OK)

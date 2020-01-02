@@ -191,3 +191,12 @@ class GetAppointmentDoctorSerializer(ModelSerializer):
         ret.update({'department':k[0]})
         return ret
     
+
+class GetDoctorList(ModelSerializer):
+
+    class Meta:
+        model = Doctor
+        fields = [
+            'id',
+            'name'
+        ]

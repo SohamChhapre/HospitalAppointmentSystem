@@ -66,3 +66,12 @@ class GetPatientSerializer(serializers.ModelSerializer):
     def get_visits(self, obj):
         visit = Appointment.objects.filter(hospital_patient_id__patient_id=obj.id).count()
         return visit
+
+class GetPatientList(serializers.ModelSerializer):
+
+    class Meta:
+        model = Patient
+        fields = [
+            'id',
+            'name',
+        ]

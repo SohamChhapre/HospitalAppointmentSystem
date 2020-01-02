@@ -39,3 +39,18 @@ class AppointmentSerializer(ModelSerializer):
         ser = GetAppointmentDoctorSerializer(queryset, many=False)
         return ser.data
 
+class AddAppointmentSerializer(ModelSerializer):
+
+    class Meta:
+        model = Appointment
+        fields = [
+            'appointment_id',
+            'hospital_patient',
+            'hospital_doctor',
+            'symptoms',
+            'time',
+            'status',
+            'prescriptions',
+            'notes',
+            'diagnosis'
+        ]

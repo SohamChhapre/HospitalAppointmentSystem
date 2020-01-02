@@ -4,6 +4,7 @@ from rest_framework.urlpatterns import format_suffix_patterns
 
 urlpatterns = [
     path('',AppointmentAPI.as_view()),
+    path('<int:id>',AppointmentAPI.as_view()),
     path('patient/<int:id>',GetPatientAppointment.as_view()),
     path('doctor/<int:id>',GetDoctorAppointment.as_view()),
     # path('list/',AppointmentAPI.as_view()),
