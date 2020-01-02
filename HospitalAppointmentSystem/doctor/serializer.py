@@ -1,4 +1,4 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer,SerializerMethodField
 from rest_framework import serializers
 from .models import Doctor
 from designation.models import Designation
@@ -7,6 +7,7 @@ from designation.serializer import DesignationSerializer
 from specialization.serializer import SpecializationSerializer
 from hospitaldoctor.serializer import GetHospitalDoctor
 from documents.serializer import DocumentPatientSerializer
+from appointment.models import Appointment
 from datetime import date
 
 class DoctorSerializer(ModelSerializer):
@@ -97,6 +98,7 @@ class DoctorListSerializer(ModelSerializer):
     age             = serializers.SerializerMethodField()
     department      = GetHospitalDoctor(source='HospitalDoctorDoctorId', many=True)
     documents       = DocumentPatientSerializer(source="DocumentDoctorId", many=True)
+    appointment     = SerializerMethodField()
 
     class Meta:
         model = Doctor
@@ -108,7 +110,8 @@ class DoctorListSerializer(ModelSerializer):
             'phone',
             'profile_picture',
             'department',
-            'documents'
+            'documents',
+            'appointment',
         ]
 
     def get_age(self, obj):
@@ -116,11 +119,18 @@ class DoctorListSerializer(ModelSerializer):
         born = obj.dob
         return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
 
+    def get_appointment(self, obj):
+        app = Appointment.objects.filter(hospital_doctor_id__doctor_id=obj.id).count()
+        return app
+
+
+
     def to_representation(self, instance):
         ret = super(DoctorListSerializer, self).to_representation(instance)
         k = ret.pop('department')
         ret.update({'department':k[0]})
         return ret
+    
         
 class GetDoctorSerializer(ModelSerializer):
 

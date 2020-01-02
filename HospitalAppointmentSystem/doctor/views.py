@@ -9,6 +9,7 @@ from hospitaldoctor.models import HospitalDoctor
 from hospital.models import Hospital
 from .models import Doctor
 from documents.models import Documents
+import json
 # Create your views here.
 
 class ListDoctor(APIView):
@@ -44,16 +45,38 @@ class ListDoctor(APIView):
                 return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request, format=None):
-        dept = request.data.pop('department')
+        payload = json.loads(request.data['payload'])
+        payload['profile_picture'] = request.data['profile_picture']
+        datafile = request.data
+        del datafile['payload']
+        del datafile['profile_picture']
+        dept = payload.pop('department')
         deptdata = {
-            'department' : dept[0]
+            'department' : dept['name']
         }
-        files = request.data.pop('documents')
-        serializer = DoctorSerializer(data=request.data)
+        files = datafile
+        desigs = payload.pop('designation').split(',')
+        specs = payload.pop('specialization').split(',')
+        dob = payload.pop('dob').split('T')
+        l=[]
+        for spec in specs:
+            d={}
+            d['specializations']=spec
+            l.append(d)
+        payload['specializations']=l
+        l=[]
+        for desig in desigs:
+            d={}
+            d['designations']=desig
+            l.append(d)
+        payload['designations']=l
+        payload['dob']=dob[0]
+        payload['gender']='O'
+        serializer = DoctorSerializer(data=payload)
         if serializer.is_valid():
             serializer.save()
             context = {
-                "message":"Doctor Created.",
+                "message":"Doctor Created Successfully",
                 "status":True,
                 "data":serializer.data
             }
@@ -63,7 +86,7 @@ class ListDoctor(APIView):
             }
             for file in files:
                 d={}
-                d['documents']=file
+                d['documents']=files[file]
                 Documents.objects.create(**d,doctor_id=serializer.data['id'])
             hpserializer = HospitalDoctorSerializer(data=data2, context=deptdata)
             if hpserializer.is_valid():

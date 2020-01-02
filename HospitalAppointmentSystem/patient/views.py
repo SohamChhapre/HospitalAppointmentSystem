@@ -9,6 +9,7 @@ from hospitalpatient.models import HospitalPatient
 from hospital.models import Hospital
 from .models import Patient
 from documents.models import Documents
+import json
 # Create your views here.
 
 class ListPatient(APIView):
@@ -44,10 +45,13 @@ class ListPatient(APIView):
                 return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request, format=None):
-        data = request.data
-        data['user']=None
-        files = request.data.pop('documents')
-        serializer = PatientSerializer(data=data)
+        payload = json.loads(request.data['payload'])
+        payload['profile_picture'] = request.data['profile_picture']
+        datafile = request.data
+        del datafile['payload']
+        del datafile['profile_picture']
+        files = datafile
+        serializer = PatientSerializer(data=payload)
         if serializer.is_valid():
             serializer.save()
             context = {
@@ -65,7 +69,7 @@ class ListPatient(APIView):
                 print(hpserializer.data)
                 for file in files:
                     d={}
-                    d['documents']=file
+                    d['documents']=files[file]
                     Documents.objects.create(**d,hospital_patient_id=hpserializer.data['hospital_patient_id'])
                 return Response(context, status=status.HTTP_201_CREATED)
             else:
@@ -80,6 +84,7 @@ class ListPatient(APIView):
                 "status":False,
                 "data":serializer.errors
             }
+        print(serializer.errors)
         return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
     def get_hospital_id(self, id):

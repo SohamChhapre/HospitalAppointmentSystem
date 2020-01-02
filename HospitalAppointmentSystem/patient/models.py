@@ -24,7 +24,7 @@ class Patient(Logs):
         ('O','OTHER')
     )
     
-    user            = models.ForeignKey(User, on_delete=models.CASCADE, null=True, default=None)
+    user            = models.ForeignKey(User, on_delete=models.CASCADE, null=True, default=None, blank=True)
     name            = models.CharField(max_length=255, null=True, blank=True)
     age             = models.PositiveSmallIntegerField( null=True, blank=True)
     email           = models.EmailField(unique=True, blank=False, null=False)

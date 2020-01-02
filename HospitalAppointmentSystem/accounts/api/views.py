@@ -5,6 +5,8 @@ from rest_framework import permissions,status
 from django.contrib.auth import authenticate,get_user_model
 from .serializers import UserRegisterSerializer
 from .permissions import AnonPermissionOnly
+from hospital.models import Hospital
+from hospital.serializers import HospitalSerializer
 
 class CustomAuthToken(ObtainAuthToken):
 
@@ -17,15 +19,15 @@ class CustomAuthToken(ObtainAuthToken):
         user = serializer.validated_data['user']
         token = Token.objects.get_or_create(user=user)
         if user.is_hospital:
+            queryset = Hospital.objects.filter(User=user.id).first()
+            serializer = HospitalSerializer(queryset, many=False)
+            data = {}
+            data['token'] = str(token[0])
+            data.update(serializer.data)
             context = {
                     "message":"Authentication",
                     "status":True,
-                    "data":{
-                            'token': str(token[0]),
-                            'email': user.email,
-                            'name': user.full_name,
-                            'id': user.id
-                            }
+                    "data":data
                     }
             return Response(context,status=status.HTTP_202_ACCEPTED)
         else:
