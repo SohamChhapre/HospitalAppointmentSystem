@@ -14,3 +14,9 @@ class DepartmentSerializer(ModelSerializer):
         else:
             dep =  Department.objects.create(**validated_data)
         return dep
+
+    def to_representation(self, instance):
+        ret = super(DepartmentSerializer, self).to_representation(instance)
+        ret['id'] = ret.pop('dept_id')
+        ret['name'] = ret.pop('department')
+        return ret

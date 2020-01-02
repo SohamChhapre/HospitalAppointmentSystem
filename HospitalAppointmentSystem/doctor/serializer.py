@@ -46,10 +46,11 @@ class DoctorSerializer(ModelSerializer):
         
     def update(self, instance, validated_data):
         
-        instance.dob          = validated_data.get("dob", instance.dob)
-        instance.email        = validated_data.get("email", instance.email)
-        instance.blood_group  = validated_data.get("blood_group", instance.blood_group)
-        instance.experience   = validated_data.get("experience", instance.experience)
+        instance.dob                = validated_data.get("dob", instance.dob)
+        instance.email              = validated_data.get("email", instance.email)
+        instance.blood_group        = validated_data.get("blood_group", instance.blood_group)
+        instance.experience         = validated_data.get("experience", instance.experience)
+        instance.profile_picture    = validated_data.get("profile_picture", instance.experience)
         
         designations = validated_data.pop('DesignationDoctorId', None)
         specializations = validated_data.pop('SpecializationDoctorId', None)
@@ -126,8 +127,8 @@ class DoctorListSerializer(ModelSerializer):
     def to_representation(self, instance):
         ret = super(DoctorListSerializer, self).to_representation(instance)
         k = ret.pop('department')
-        k[0]['id'] = k[0].pop('dept_id')
-        k[0]['name'] = k[0].pop('department')
+        k[0]['id'] = k[0].pop('id')
+        k[0]['name'] = k[0].pop('name')
         ret.update({'department':k[0]})
         return ret
     
@@ -163,8 +164,8 @@ class GetDoctorSerializer(ModelSerializer):
     def to_representation(self, instance):
         ret = super(GetDoctorSerializer, self).to_representation(instance)
         k = ret.pop('department')
-        k[0]['id'] = k[0].pop('dept_id')
-        k[0]['name'] = k[0].pop('department')
+        k[0]['id'] = k[0].pop('id')
+        k[0]['name'] = k[0].pop('name')
         ret.update({'department':k[0]})
         return ret
 
@@ -186,8 +187,8 @@ class GetAppointmentDoctorSerializer(ModelSerializer):
     def to_representation(self, instance):
         ret = super(GetAppointmentDoctorSerializer, self).to_representation(instance)
         k = ret.pop('department')
-        k[0]['id'] = k[0].pop('dept_id')
-        k[0]['name'] = k[0].pop('department')
+        k[0]['id'] = k[0].pop('id')
+        k[0]['name'] = k[0].pop('name')
         ret.update({'department':k[0]})
         return ret
     

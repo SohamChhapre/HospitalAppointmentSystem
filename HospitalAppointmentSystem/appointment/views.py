@@ -42,7 +42,6 @@ class AppointmentAPI(APIView):
 
     def post(self, request, format=None):
         payload = json.loads(request.data['payload'])
-        # payload = request.data['payload']
         patient = payload.pop('patient')
         doctor  = payload.pop('doctor')
         phone  = payload.pop('phone')

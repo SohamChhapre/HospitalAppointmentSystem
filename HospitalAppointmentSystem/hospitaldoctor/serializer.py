@@ -21,7 +21,7 @@ class HospitalDoctorSerializer(ModelSerializer):
         dept = deptserializer.data
         data = {
             'hospital_doctor':hospitaldoctor.hospital_doctor_id,
-            'dept':dept['dept_id']
+            'dept':dept['id']
         }
         docdept = DoctorDepartmentSerializer(data=data)
         if docdept.is_valid():
