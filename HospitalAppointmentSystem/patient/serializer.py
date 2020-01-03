@@ -38,7 +38,6 @@ class PatientListSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         ret = super(PatientListSerializer, self).to_representation(instance)
         k = ret.pop('documents')
-        # print()
         ret.update({'documents':k[0].pop('doc')})
         return ret
 
@@ -59,7 +58,6 @@ class GetPatientSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         ret = super(GetPatientSerializer, self).to_representation(instance)
         k = ret.pop('documents')
-        # print()
         ret.update({'documents':k[0].pop('doc')})
         return ret
 

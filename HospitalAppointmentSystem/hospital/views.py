@@ -10,6 +10,8 @@ from patient.serializer import GetPatientList
 from patient.models import Patient
 from doctor.serializer import GetDoctorList
 from doctor.models import Doctor
+from hospitaldoctor.models import HospitalDoctor
+from hospitalpatient.models import HospitalPatient
 # Create your views here.
 
 class ListHospital(APIView):
@@ -55,16 +57,27 @@ class ListHospital(APIView):
 class HospitalPatientDoctorAPI(APIView):
 
     def get(self, request, format=None):
-        queryset = Patient.objects.all()
+        hospitalid = self.get_hospital_id(request.user)
+
+        hp = HospitalPatient.objects.filter(hospital=hospitalid).values_list('patient')
+        queryset = Patient.objects.filter(id__in=hp)
         serializer = GetPatientList(queryset, many=True)
         data = {}
         data['patient'] = serializer.data
-        queryset = Doctor.objects.all()
+
+        hd = HospitalDoctor.objects.filter(hospital=hospitalid).values_list('doctor')
+        queryset = Doctor.objects.filter(id__in=hd)
         serializer = GetDoctorList(queryset, many=True)
         data['doctor'] = serializer.data
+        
         context = {
             "message": "Hospital Doctor And Patient",
             "status": True,
             "data":data
         }
         return Response(context, status=status.HTTP_200_OK)
+
+    def get_hospital_id(self, id):
+        query = Hospital.objects.filter(User=id)
+        hospital_id = query.values_list('id', flat=True)[0]
+        return hospital_id

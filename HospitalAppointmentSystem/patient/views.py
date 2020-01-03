@@ -17,7 +17,8 @@ class ListPatient(APIView):
     def get(self, request, format=None, id=None):
         request = self.request
         if id is None:
-            queryset = Patient.objects.all()
+            hp = HospitalPatient.objects.filter(hospital=self.get_hospital_id(request.user)).values_list('patient')
+            queryset = Patient.objects.filter(id__in=hp)
             serializer = GetPatientSerializer(queryset, many=True)
             context = {
                     "message":"Patient's Data",
@@ -92,14 +93,26 @@ class ListPatient(APIView):
         hospital_id = query.values_list('id', flat=True)[0]
         return hospital_id
 
-    def get_patient(self, id):
+    def get_patient(self, id, hospitalId):
         try:
-            return Patient.objects.get(id=id)
-        except company.DoesNotExist:
+            hd = HospitalPatient.objects.filter(hospital=hospitalId,patient_id=id)
+            if hd:
+                return Doctor.objects.get(id=id)
+            else:
+                return None 
+        except Patient.DoesNotExist:
             raise Http404
 
     def patch(self, request, id, format=None):
-        query = self.get_patient(id)
+        hospitalId = self.get_hospital_id(request.user)
+        query = self.get_patient(id, hospitalId)
+        if query is None:
+            context = {
+                "message":"Wrong Id to patch data!!.",
+                "status":False,
+                "data":serializer.errors
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
         serializer = PatientSerializer(query, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
@@ -117,7 +130,15 @@ class ListPatient(APIView):
         return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, id, format=None):
-        query = self.get_patient(id)
+        hospitalId = self.get_hospital_id(request.user)
+        query = self.get_patient(id, hospitalId)
+        if query is None:
+            context = {
+            "message":"Wrong Patient Id",
+            "status":False,
+            "data":None
+            }
+            return Response(context,status=status.HTTP_204_NO_CONTENT)
         data = query.delete()
         context = {
             "message":"Patient Deleted Successfully",
@@ -130,7 +151,8 @@ class ListPatient(APIView):
 class PatientListAPI(APIView):
 
     def get(self, request, format=None):
-        queryset = Patient.objects.all()
+        hp = HospitalPatient.objects.filter(hospital=self.get_hospital_id(request.user)).values_list('patient')
+        queryset = Patient.objects.filter(id__in=hp)
         serializer = PatientListSerializer(queryset, many=True)
         context = {
                 "message":"Patient List Data",
@@ -139,4 +161,9 @@ class PatientListAPI(APIView):
                 "data":serializer.data
             }
         return Response(context, status=status.HTTP_200_OK)
+
+    def get_hospital_id(self, id):
+        query = Hospital.objects.filter(User=id)
+        hospital_id = query.values_list('id', flat=True)[0]
+        return hospital_id
 

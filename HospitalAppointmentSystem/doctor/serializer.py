@@ -9,6 +9,7 @@ from hospitaldoctor.serializer import GetHospitalDoctor
 from documents.serializer import DocumentPatientSerializer
 from appointment.models import Appointment
 from datetime import date
+import datetime
 
 class DoctorSerializer(ModelSerializer):
     designations    = DesignationSerializer(source='DesignationDoctorId', many=True)
@@ -139,6 +140,8 @@ class GetDoctorSerializer(ModelSerializer):
     specializations = SpecializationSerializer(source='SpecializationDoctorId', many=True)
     department      = GetHospitalDoctor(source='HospitalDoctorDoctorId', many=True)
     documents       = DocumentPatientSerializer(source="DocumentDoctorId", many=True)
+    age             = SerializerMethodField()
+    doj             = SerializerMethodField()
 
     class Meta:
         model = Doctor
@@ -148,6 +151,7 @@ class GetDoctorSerializer(ModelSerializer):
             'dob',
             'email',
             'address',
+            'age',
             'phone',
             'city',
             'blood_group',
@@ -157,9 +161,19 @@ class GetDoctorSerializer(ModelSerializer):
             'designations',
             'specializations',
             'department',
-            'documents'
+            'documents',
+            'doj'
         ]
         read_only_fields = ['user','profile_picture']
+    
+    def get_age(self, obj):
+        today = date.today()
+        born = obj.dob
+        return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
+
+    def get_doj(self, obj):
+        date = obj.created_at
+        return date.strftime('%d-%b-%Y')
 
     def to_representation(self, instance):
         ret = super(GetDoctorSerializer, self).to_representation(instance)
@@ -167,6 +181,9 @@ class GetDoctorSerializer(ModelSerializer):
         k[0]['id'] = k[0].pop('id')
         k[0]['name'] = k[0].pop('name')
         ret.update({'department':k[0]})
+        date = datetime.datetime.strptime(ret['dob'],"%Y-%m-%d")
+        date = date.strftime('%d-%b-%Y')
+        ret['dob']=date
         return ret
 
 class GetAppointmentDoctorSerializer(ModelSerializer):

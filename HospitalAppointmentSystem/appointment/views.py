@@ -13,7 +13,7 @@ class AppointmentAPI(APIView):
 
     def get(self, request, format=None, id=None):
         if id is None:
-            queryset = Appointment.objects.all()
+            queryset = Appointment.objects.all().order_by('-time')
             serializer = AppointmentSerializer(queryset, many=True)
             context = {
                     "message":"Appointment's Data",
@@ -78,7 +78,7 @@ class GetPatientAppointment(APIView):
                     "data": None
                 }
             return Response(context, status=status.HTTP_400_BAD_REQUEST)
-        queryset = Appointment.objects.filter(hospital_patient_id__patient_id=id)
+        queryset = Appointment.objects.filter(hospital_patient_id__patient_id=id).order_by('-time')
         serializer = AppointmentSerializer(queryset, many=True)
         if queryset:
             context = {
@@ -105,7 +105,7 @@ class GetDoctorAppointment(APIView):
                     "data": None
                 }
             return Response(context, status=status.HTTP_400_BAD_REQUEST)
-        queryset = Appointment.objects.filter(hospital_doctor_id__doctor_id=id)
+        queryset = Appointment.objects.filter(hospital_doctor_id__doctor_id=id).order_by('-time')
         serializer = AppointmentSerializer(queryset, many=True)
         if queryset:
             context = {
