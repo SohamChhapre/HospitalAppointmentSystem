@@ -56,7 +56,8 @@ class DashboardAPI(APIView):
         l =[]
         for key in d:
             d2 = {}
-            d2[key]=d[key]
+            d2['name']=key
+            d2['total']=d[key]
             l.append(d2)
         data['AdmByDiv'] = l
         context['data']=data

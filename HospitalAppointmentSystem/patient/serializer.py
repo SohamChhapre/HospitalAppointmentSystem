@@ -13,6 +13,12 @@ class PatientSerializer(serializers.ModelSerializer):
             'name',
             'email',             
             'profile_picture',
+            'phone',
+            'age',
+            'address',
+            'city',
+            'gender',
+            'blood_group'
         ]
 
 class PatientListSerializer(serializers.ModelSerializer):

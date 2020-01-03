@@ -6,6 +6,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from hospitalpatient.models import HospitalPatient
 from hospitaldoctor.models import HospitalDoctor
+from documents.models import Documents
+from hospital.models import Hospital
 import json
 # Create your views here.
 
@@ -13,7 +15,8 @@ class AppointmentAPI(APIView):
 
     def get(self, request, format=None, id=None):
         if id is None:
-            queryset = Appointment.objects.all().order_by('-time')
+            hospitalId = self.get_hospital_id(request.user)
+            queryset = Appointment.objects.filter(hospital_patient_id__hospital_id=hospitalId).order_by('-time')
             serializer = AppointmentSerializer(queryset, many=True)
             context = {
                     "message":"Appointment's Data",
@@ -67,6 +70,23 @@ class AppointmentAPI(APIView):
             }
             return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
+    def patch(self, request, id, format=None):
+        files = request.data
+        for file in files:
+            d={}
+            d['documents']=files[file]
+            Documents.objects.create(**d,appointment_id=id)
+            context = {
+                "message":"Documents Updated Successfully",
+                "status":True,
+                "data":None
+            }
+            return Response(context, status=status.HTTP_201_CREATED)
+
+    def get_hospital_id(self, id):
+        query = Hospital.objects.filter(User=id)
+        hospital_id = query.values_list('id', flat=True)[0]
+        return hospital_id
 
 class GetPatientAppointment(APIView):
     
@@ -116,8 +136,8 @@ class GetDoctorAppointment(APIView):
             return Response(context, status=status.HTTP_200_OK)
         else:
             context = {
-                "message":"Invalid Id to get data",
-                "status":False,
-                "data": None
+                "message":"No Appointment Of the Doctor",
+                "status":True,
+                "data": []
             }
-            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+            return Response(context, status=status.HTTP_200_OK)
